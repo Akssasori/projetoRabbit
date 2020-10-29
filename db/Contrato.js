@@ -382,7 +382,6 @@ schema.pre('save', function (next) {
   this.dataVigencia = moment().format('YYYY-MM-DD');
   this.dataVencimento  = moment().format('YYYY-MM-DD'); 
 
-  console.log('this.dataVigencia: ',this.dataVigencia)
   next();
 
 })

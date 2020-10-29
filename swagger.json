@@ -94,6 +94,20 @@
 						"required": false,
 						"description": "entidade",
 						"type": "string"
+					},
+					{
+						"name": "pagina",
+						"in": "query",
+						"required": false,
+						"description": "pagina",
+						"type": "string"
+					},
+					{
+						"name": "tamanhoPagina",
+						"in": "query",
+						"required": false,
+						"description": "tamanhoPagina",
+						"type": "string"
 					}
 				],
 				"summary": "Get all contratos in system",
@@ -307,7 +321,61 @@
 					}
 				}
 			}
+		},
+		"/contrato_beneficiario/fornecedor": {
+			"get": {
+				"tags": [
+					"fornecedor"
+				],
+				"summary": "Get fornecedor with given ID",
+				"responses": {
+					"200": {
+						"description": "fornecedor is found",
+						"schema": {
+							"$ref": "#/definitions/fornecedor"
+						}
+					}
+				}
+			}
+		},
+		"/contrato_beneficiario/{idFornecedor}/putFornecedor": {
+			"parameters": [
+				{
+					"name": "IdFornecedor",
+					"in": "path",
+					"required": true,
+					"description": "ID of contratos that we want to find",
+					"type": "string"
+				}
+			],
+			
+			"put": {
+				"summary": "Update Contrato with give ID",
+				"tags": [
+					"fornecedor"
+				],
+				"parameters": [
+					{
+						"name": "fornecedores",
+						"in": "body",
+						"description": "fornecedor",
+						"schema": {
+							"$ref": "#/definitions/contrato"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "contrato is updated",
+						"schema": {
+							"$ref": "#/definitions/contrato"
+						}
+					}
+				}
+			}
 		}
+
+
 		
 	},
 	"definitions": {

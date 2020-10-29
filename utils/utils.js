@@ -41,6 +41,7 @@ module.exports = {
                 let testando = CampoSelecionado.toLowerCase().split(' ');
                 let nome;
                 let sobrenome;
+                
                 for (var i = 0; i < testando.length; i++) {
                     if (i === 0) {
                         testando[i] = testando[i][0].toUpperCase() + testando[i].slice(1);
