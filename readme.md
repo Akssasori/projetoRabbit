@@ -59,3 +59,4 @@ app.post("/decript", (req, res) => {
     }
 });
 
+//"host": "api-hadministradora.hmg.marlin.com.br",

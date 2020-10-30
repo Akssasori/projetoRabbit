@@ -57,7 +57,7 @@ var createContrato = function (req, res, next) {
 					console.log('forneceodr', forne)
 			})
 			//console.log('data.corretora', cliente.corretora)
-			console
+			
 			let codigoUfIbge;
 			await axios.get(`https://consulta-api.hmg.marlin.com.br/api/v1/municipios/${contrato.titular.endereco.uf}`, {
 				headers: {
@@ -213,10 +213,18 @@ var getFindContrato = function (req, res, next) {
 		let primeiro = Utils.retornaCampo(1, administradora);
 		let segundo = Utils.retornaCampo(2, operadora)
 		let terceiro = Utils.retornaCampo(3, dataNascimento);
-		let quarto = Utils.retornaCampo(4, nomeTitular);
+		let quarto = nomeTitular && nomeTitular !== undefined ? Utils.retornaCampo(4, nomeTitular) : null;
 		let quinto = Utils.retornaCampo(5, entidade);
 
-		Contrato.find({ $and: [primeiro, segundo, terceiro, quarto, quinto] })
+		let propertyArray = [primeiro, segundo, terceiro, quarto, quinto]
+		let validPropertyArray = []
+
+		propertyArray.map(property => {
+			if (property && property !== undefined && property !== '')
+			validPropertyArray.push(property)
+		})
+
+		Contrato.find({ $and: validPropertyArray })
 			.then(resp => {
 				res.json(resp);
 			})
@@ -415,6 +423,7 @@ var getFornecedor = function (req, res, next) {
 var putFornecedor = function (req, res, next) {
 	
 	let idFornecedor = ObjectId(req.params.id)
+	console.log(idFornecedor)
 	let fornecedor = req.body
 	Fornecedor.updateOne(
 			{
@@ -587,7 +596,9 @@ var createFornecedor = function (req, res) {
 
 
 
-
+//putFornecedor
+router.route('/contrato_beneficiario/:id/putfornecedor')
+	.put(putFornecedor);
 
 
 router.route('/contrato_beneficiario')
@@ -596,9 +607,7 @@ router.route('/contrato_beneficiario')
 //getFornecedor
 router.route('/contrato_beneficiario/fornecedor')
 	.get(getFornecedor);
-//putFornecedor
-router.route('/contrato_beneficiario/:id/putfornecedor')
-	.put(putFornecedor);
+
 
 router.route('/contrato_beneficiario/:id')
 	.get(getFindByIDContrato);

@@ -9,7 +9,8 @@
 			"url": "https://opensource.org/licenses/MIT"
 		}
 	},
-	"host": "api-hadministradora.hmg.marlin.com.br",
+	"host": "localhost:3001",
+	
 	"basePath": "/api/v1",
 	"tags": [
 		{
@@ -18,7 +19,7 @@
 		}
 	],
 	"schemes": [
-		"https"
+		"http"
 	],
 	"consumes": [
 		"application/json"
@@ -116,6 +117,22 @@
 						"description": "OK",
 						"schema": {
 							"$ref": "#/definitions/contratos"
+						}
+					}
+				}
+			}
+		},
+		"/contrato_beneficiario/fornecedor": {
+			"get": {
+				"tags": [
+					"fornecedor"
+				],
+				"summary": "Get fornecedor with given ID",
+				"responses": {
+					"200": {
+						"description": "fornecedor is found",
+						"schema": {
+							"$ref": ""
 						}
 					}
 				}
@@ -222,6 +239,7 @@
 				}
 			}
 		},
+		
 		"/contrato_beneficiario/{numeroCliente}/titulos": {
 			"parameters": [
 				{
@@ -272,6 +290,7 @@
 				}
 			}
 		},
+		
 		"/contrato_beneficiario/{proposta}/proposta": {
 			"parameters": [
 				{
@@ -322,22 +341,7 @@
 				}
 			}
 		},
-		"/contrato_beneficiario/fornecedor": {
-			"get": {
-				"tags": [
-					"fornecedor"
-				],
-				"summary": "Get fornecedor with given ID",
-				"responses": {
-					"200": {
-						"description": "fornecedor is found",
-						"schema": {
-							"$ref": "#/definitions/fornecedor"
-						}
-					}
-				}
-			}
-		},
+		
 		"/contrato_beneficiario/{idFornecedor}/putFornecedor": {
 			"parameters": [
 				{
@@ -360,7 +364,7 @@
 						"in": "body",
 						"description": "fornecedor",
 						"schema": {
-							"$ref": "#/definitions/contrato"
+							"$ref": "#/definitions/fornecedor"
 						}
 					}
 				],
@@ -368,7 +372,7 @@
 					"200": {
 						"description": "contrato is updated",
 						"schema": {
-							"$ref": "#/definitions/contrato"
+							"$ref": "#/definitions/fornecedor"
 						}
 					}
 				}
