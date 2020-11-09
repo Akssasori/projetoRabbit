@@ -13,9 +13,11 @@ const axios = require('axios');
 const moment = require('moment');
 const Utils = require("./utils/utils");
 const Fornecedor = require("./db/Fornecedor");
-const { db } = require("./db/Contrato");
 const { ObjectId } = require("mongodb");
 var CronJob = require('cron').CronJob;
+
+
+
 
 
 app.use(cors())
@@ -54,12 +56,11 @@ var createContrato = function (req, res, next) {
 
 			let fornecedor = new Fornecedor(cliente.corretora)
 			fornecedor.save((err,forne) =>{
-					console.log('forneceodr', forne)
+					console.log('fornecedor', forne)
 			})
-			//console.log('data.corretora', cliente.corretora)
 			
 			let codigoUfIbge;
-			await axios.get(`https://consulta-api.hmg.marlin.com.br/api/v1/municipios/${contrato.titular.endereco.uf}`, {
+			await axios.get(`https://consulta-api.hmg.marlin.com.br/api/v1/municipios/${contrato.titular.endereco.uf}`, { 
 				headers: {
 					'Authorization': 'Bearer _mrwY32qaEeF25TTyrWuRw==',
 					'Accept': 'application/json',
@@ -208,6 +209,7 @@ var getFindContrato = function (req, res, next) {
 	let skip = req.query.pagina;
 	let limit = req.query.tamanhoPagina;
 
+
 	if (administradora || operadora || dataNascimento || nomeTitular || entidade ) {
 
 		let primeiro = Utils.retornaCampo(1, administradora);
@@ -219,9 +221,9 @@ var getFindContrato = function (req, res, next) {
 		let propertyArray = [primeiro, segundo, terceiro, quarto, quinto]
 		let validPropertyArray = []
 
-		propertyArray.map(property => {
-			if (property && property !== undefined && property !== '')
-			validPropertyArray.push(property)
+		propertyArray.map(v => {
+			if (v && v !== undefined && v !== '')
+			validPropertyArray.push(v)
 		})
 
 		Contrato.find({ $and: validPropertyArray })
@@ -420,10 +422,12 @@ var getFornecedor = function (req, res, next) {
 		res.json(resp);
 	})
 };
+
+
+
 var putFornecedor = function (req, res, next) {
 	
 	let idFornecedor = ObjectId(req.params.id)
-	console.log(idFornecedor)
 	let fornecedor = req.body
 	Fornecedor.updateOne(
 			{
@@ -453,7 +457,7 @@ var putFornecedor = function (req, res, next) {
 
 var createFornecedor = function (req, res) {
 	let idFornecedor = ObjectId(req.params.idFornecedor);
-	Fornecedor.findById({_id: id}).then(data =>{
+	Fornecedor.findById({_id: idFornecedor}).then(data =>{
 		axios.post('https://prjqualivida.mxmwebmanager.com.brapi/InterfacedoFornecedor/Gravar', {
 			AutheticationToken: {
 				Username: "TESTEAPI.QUA",
@@ -590,11 +594,6 @@ var createFornecedor = function (req, res) {
 		
 	})
 }
-
-
-
-
-
 
 //putFornecedor
 router.route('/contrato_beneficiario/:id/putfornecedor')
