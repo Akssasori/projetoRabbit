@@ -15,8 +15,8 @@ const Utils = require("./utils/utils");
 const Fornecedor = require("./db/Fornecedor");
 const { ObjectId } = require("mongodb");
 var CronJob = require('cron').CronJob;
-
-
+var fs = require('fs');
+let converter = require('json-2-csv');
 
 
 
@@ -25,21 +25,6 @@ app.use(bodyParser.urlencoded({
 	extended: true
 }));
 app.use(bodyParser.json());
-
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-
-const handleError = (res, msg) => {
-	return err => {
-		console.log(err);
-		res.status(500).json({ "error": msg });
-	};
-};
-
-const handleSucess = (res, msg) => {
-	return () => {
-		res.json({ "ok": msg });
-	};
-};
 
 var createContrato = function (req, res, next) {
 
@@ -416,14 +401,181 @@ var getProposta = function (req, res, next) {
 		res.json(data);
 	})
 };
-var getFornecedor = function (req, res, next) {
+
+var getFindByIdCsv = function (req, res){
+
+	let operadoraCodigo = req.params.id;
+	
+	Contrato.find().where({'operadora.id':operadoraCodigo})
+		.then(data =>{
+
+		if (data && data.length > 0 ) {	
+
+			let options = {
+				delimiter : {
+					wrap  : '"', 
+					field : ';', 
+					eol   : '\r\n'
+				},
+				prependHeader: true,
+				sortHeader: false,
+				excelBOM: true,
+				trimHeaderValues : true,
+				trimFieldValues  : false,
+				trimHeaderFields : true,
+				expandArrayObjects: false,
+				useLocaleFormat:true,
+			};
+
+			let arrayCsv = data;
+			let arrayNew = [] ;
+			let objUsado ;
+
+			if (operadoraCodigo === '1') {
+
+				let objUnimed = {
+					operadora: "UNIMED",
+					parentesco: arrayCsv[0].titular.dependente[0].grauParentesco.descricao,
+					nome: arrayCsv[0].titular.nome,
+					datavigencia: arrayCsv[0].titular.dataVigencia,
+					dataNascimento: arrayCsv[0].titular.DatadeNascimento,
+					sexo: arrayCsv[0].titular.sexo,
+					estadoCivil: arrayCsv[0].titular.estadoCivil.descricao,
+					nomeMae: arrayCsv[0].titular.nomeMae,
+					cpf: arrayCsv[0].titular.cpf,
+					rg: arrayCsv[0].titular.rg,
+					orgaoEmissor: arrayCsv[0].titular.orgaoEmissor.descricao,
+					cep: arrayCsv[0].titular.endereco.cep,
+					cidade: arrayCsv[0].titular.endereco.cidade,
+					uf: arrayCsv[0].titular.endereco.uf,
+					bairro: arrayCsv[0].titular.endereco.bairro,
+					dddTelefone: arrayCsv[0].titular.dddTelefone,
+					numTelefone: arrayCsv[0].titular.numTelefone,
+					dddCelular: arrayCsv[0].titular.dddCelular,
+					numCelular: arrayCsv[0].titular.numCelular,
+					logradouro: arrayCsv[0].titular.endereco.logradouro,
+					numero: arrayCsv[0].titular.endereco.numCelular,
+					complemento: arrayCsv[0].titular.endereco.complemento,
+				}
+
+				objUsado = objUnimed
+			
+
+			} else if (operadoraCodigo === '2'){
+				
+				let objAssim = { 
+					operadora: "ASSIM",
+					IdProposta: arrayCsv[0].numeroProposta,
+					nome: arrayCsv[0].titular.nome,
+					sexo: arrayCsv[0].titular.sexo,
+					estadoCivil: arrayCsv[0].titular.estadoCivil.descricao,
+					dataNascimento: arrayCsv[0].titular.dataNascimento,
+					logradouro: arrayCsv[0].titular.endereco.logradouro,
+					complemento: arrayCsv[0].titular.endereco.complemento,
+					bairro: arrayCsv[0].titular.endereco.bairro,
+					cep: arrayCsv[0].titular.endereco.cep,
+					telefone : arrayCsv[0].titular.numCelular,
+					cidade:arrayCsv[0].titular.endereco.cidade,
+					uf: arrayCsv[0].titular.endereco.uf,
+					dataVigencia: arrayCsv[0].dataVigencia,
+					parentesco: arrayCsv[0].titular.dependente[0].grauParentesco.descricao,
+					nomeMae: arrayCsv[0].titular.nomeMae,
+					cpf: arrayCsv[0].titular.cpf,
+					acomodacao: arrayCsv[0].plano.acomodacao.descricao,
+				}
+		
+				objUsado = objAssim
+
+			} else if (operadoraCodigo === '3'){
+			
+				let objIntegral = {
+					operadora: "INTEGRAL SAUDE",
+					IdProposta: arrayCsv[0].numeroProposta,
+					nome: arrayCsv[0].titular.nome,
+					dataNascimento: arrayCsv[0].titular.DatadeNascimento,
+					parentesco: arrayCsv[0].titular.parentesco,
+					sexo: arrayCsv[0].titular.sexo,
+					estadoCivil: arrayCsv[0].titular.estadoCivil.descricao,
+					cpf: arrayCsv[0].titular.cpf,
+					nomeMae: arrayCsv[0].titular.nomeMae,
+					dataInicioContrato: arrayCsv[0].titular.dataVigencia,
+					logradouro: arrayCsv[0].titular.logradouro,
+					numero: arrayCsv[0].titular.numero,
+					complemento: arrayCsv[0].titular.complemento,
+					bairro: arrayCsv[0].titular.bairro,
+					cep: arrayCsv[0].titular.cep,
+					cidade:arrayCsv[0].titular.cidade,
+					uf: arrayCsv[0].titular.uf,
+					numeroCns: arrayCsv[0].titular.numeroCns,
+					email: arrayCsv[0].titular.email
+				}
+
+				objUsado = objIntegral
+
+			} else if (operadoraCodigo === '28'){
+				let objHealthmed ={
+					operadora: "HEALTHMED",
+					nome: arrayCsv[0].titular.nome,
+					dataVigencia: arrayCsv[0].dataVigencia,
+					dataNascimento: arrayCsv[0].titular.dataNascimento,
+					sexo: arrayCsv[0].titular.sexo,
+					estadoCivil: arrayCsv[0].titular.estadoCivil.descricao,
+					nomeMae: arrayCsv[0].titular.nomeMae,
+					cpf: arrayCsv[0].titular.cpf,
+					dataVigencia: arrayCsv[0].dataVigencia,
+					rg: arrayCsv[0].titular.rg,
+					orgaoEmissor: arrayCsv[0].titular.orgaoEmissor.descricao,
+					cep: arrayCsv[0].titular.endereco.cep,
+					cidade:arrayCsv[0].titular.endereco.cidade,
+					uf: arrayCsv[0].titular.endereco.uf,
+					bairro: arrayCsv[0].titular.endereco.bairro,
+					dddTelefone: arrayCsv[0].titular.dddTelefone,
+					numTelefone: arrayCsv[0].titular.numTelefone,
+					dddCelular: arrayCsv[0].titular.dddCelular,
+					numCelular: arrayCsv[0].titular.numCelular,
+					logradouro: arrayCsv[0].titular.endereco.logradouro,
+					numero: arrayCsv[0].titular.endereco.numCelular,
+					complemento: arrayCsv[0].titular.endereco.complemento,
+					email: arrayCsv[0].titular.email
+				}
+			
+				objUsado = objHealthmed
+			}
+
+			arrayNew.push(objUsado)
+
+
+			let funcaoCallback = function (err, csv) {
+				if (err) {
+					console.log("Erro: " + err);
+				} else {
+					fs.writeFile('file.csv', csv, function (err) {
+						if (err) throw err;
+					
+						console.log('file saved');
+						res.header('Contente-Type', 'text/csv');
+						res.attachment('file.csv');
+						res.send(csv);
+					
+					});
+					
+				}
+			}
+
+			converter.json2csv(arrayNew, funcaoCallback, options);
+			
+		}else{
+			return res.json("Digite um id de operadora valido")
+		}	
+	})
+};
+
+var getFornecedor = function (req, res, next) { 
 	let fornecedor = parseInt(req.params.idFornecedor)
 		Fornecedor.find({}).then(resp => {
 		res.json(resp);
 	})
 };
-
-
 
 var putFornecedor = function (req, res, next) {
 	
@@ -454,25 +606,26 @@ var putFornecedor = function (req, res, next) {
 	
 };
 
-
 var createFornecedor = function (req, res) {
 	let idFornecedor = ObjectId(req.params.idFornecedor);
-	Fornecedor.findById({_id: idFornecedor}).then(data =>{
-		axios.post('https://prjqualivida.mxmwebmanager.com.brapi/InterfacedoFornecedor/Gravar', {
+	console.log('idFornecedor: ', idFornecedor)
+	Fornecedor.findById({_id: idFornecedor}).then(data => {
+
+		axios.post('https://prjqualivida.mxmwebmanager.com.br/api/InterfacedoFornecedor/Gravar', {
 			AutheticationToken: {
 				Username: "TESTEAPI.QUA",
 				Password: "TST90",
-				EnvironmentName: "QUALIVIDAPROJ"
+				EnvironmentName: "QUALIVIDAPROJ"				
 			},
 			Data: {
 				InterfacedoFornecedor: [
 					{
 						SequenciadoRegistro: data.id,
-						Codigo: "14270428000169",
-						TipodePessoa: "J",
-						CPFouCNPJ: "14270428000169",
-						Nome: "Fornecedor Belem",
-						NomeFantansia: "Fornecedor Belem",
+						Codigo: data.codigo,
+						TipodePessoa: "J", 
+						CPFouCNPJ: data.cnpj,
+						Nome: data.nome,
+						NomeFantansia: data.nome,
 						TipodoLocaldoIndicadordeInscricaoEstadual: "1",
 						Inscricao: "26825520",
 						InscricaoMunicicipal: "",
@@ -486,8 +639,8 @@ var createFornecedor = function (req, res) {
 						PisPasep: "",
 						QuantidadedeDependente: "0",
 						CodigoBrasileirodeOcupacao: "",
-						DatadeNascimento: "26051999",
-						EstadoCivil: "C",
+						DatadeNascimento: data.dataNascimento,
+						EstadoCivil: data.estadoCivil,
 						Nacionalidade: "BRA",
 						CodigodoPais: "BRA",
 						Pais: "Brasil",
@@ -504,98 +657,22 @@ var createFornecedor = function (req, res) {
 						Ativo: "A",
 						Homologado: "S",
 						InformacaoesComplementares: "N",
-						InterfaceContaCorrentedoFornecedor: [
-							{
-								CodigodoFornecedor: "14270428000169",
-								CodigodaContaCorrente: "012",
-								CodigodoBanco: "341",
-								NomedoBanco: "itau",
-								AgenciadoBanco: "0740",
-								NomedaAgencia: "Tutoia",
-								EnderecodaAgencia: "Rua Tutoia, 300",
-								BairrodaAgencia: "Paraiso",
-								CidadedaAgencia: "Sao Paulo",
-								UFdaAgencia: "SP",
-								CepdaAgencia: "04311-080",
-								NumerodaContaBancaria: "62533-9",
-								TipodeConta: "C",
-								StatusdaConta: "A",
-								IndicadordeContaPrincipal: "S"
-							}
-						],
-						InterfaceFornecedorContabil: [
-							{
-								SequenciadoFornecedorContabil: 1,
-								CodigoFornecedor: "14270428000169",
-								CodigoEmpresa: "001",
-								CodigoFilial: "00",
-								CodigoMoeda: "BRL",
-								NumeroContaContabil: "",
-								NumeroContaContabilAntecipacao: "",
-								InterfacedoFornecedorGrupoPagamento: [
-									{
-										SequenciadoFornecedorGrupoPagamento: "1",
-										CodigoFornecedor: "14270428000169",
-										CodigoEmpresa: "001",
-										CodigoFilial: "00",
-										CodigoMoeda: "BRL",
-										CodigoGrupoPagamento: "201.2",
-										CodigoImpostoIR: "",
-										CodigoImpostoINSS: "",
-										CodigoImpostoISS: "",
-										CodigoImpostoPIS: "",
-										CodigoImpostoCOFINS: "",
-										CodigoImpostoContribuicaoSocial: "",
-										CodigoImpostoINSSI: "",
-										CodigoImpostoSEST: "",
-										IdentificadorTipoServico: "1",
-										CodigoAtividadeEconomica: "2"
-									}
-								]
-							}
-						],
-						InterfaceFornecedorBeneficiario: [
-							{
-								CodigodoFornecedor: "14270428000169",
-								CodigodoBeneficiario: "95318356087",
-								CodigodoTipodeRelacionamento: "3"
-							}
-						],
-						InterfaceFornecedorHistorico: [
-							{
-								CodigodoFornecedor: "14270428000169",
-								DatadaOcorrencia: "10/10/19",
-								Historico: "Teste de Historico de fornecedor",
-								TipoOcorrencia: "01"
-							}
-						],
-						InterfaceFornecedorInformacoesComplementares: [
-							{
-								InscricaoEstadualdoParticipante: "",
-								InscricaonoINSSdoParticipante: "",
-								NumerodeIdentificacaodoTrabalhador: "",
-								NumerodaNaturezadaRetencao: "",
-								CodigoTipodeAssinante: "",
-								ClassificacaonoSimplesNacional: "",
-								TipodoClienteServicodeComunicacao: "",
-								TipodePessoaEstrangeira: "",
-								NIFFornecedorEstrangeiro: "",
-								BeneficiarodeRendimentonoExterior: "",
-								BeneficiarioDispensadodoNIF: "",
-								PaisNaoExigeNIF: ""
-							}
-						]
 					}
 				]
 			}
 		}).then(resp => {
 			res.json({ "resposta Servidor MXM": resp.data.Messages[0], "Dados Enviados": JSON.parse(resp.config.data), "Processo :": resp.data.Data });
+			console.log(data);
 		})
 		
 	})
+	
 }
 
-//putFornecedor
+router.route('/contrato_beneficiario/csv/:id')
+		.get(getFindByIdCsv);
+
+
 router.route('/contrato_beneficiario/:id/putfornecedor')
 	.put(putFornecedor);
 
@@ -603,7 +680,7 @@ router.route('/contrato_beneficiario/:id/putfornecedor')
 router.route('/contrato_beneficiario')
 	.post(createContrato)
 	.get(getFindContrato);
-//getFornecedor
+
 router.route('/contrato_beneficiario/fornecedor')
 	.get(getFornecedor);
 
@@ -629,7 +706,7 @@ router.route('/contrato_beneficiario/:carteirinha/carteirinha')
 	.get(getCarteirinha);
 
 router.route('/contrato_beneficiario/:idFornecedor/fornecedor')
-	.post(createFornecedor);
+	.get(createFornecedor);
 	
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));

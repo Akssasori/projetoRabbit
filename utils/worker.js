@@ -8,7 +8,9 @@ const client = new MongoClient(url);
 const queue = require("./queue");
 const CryptoJS = require('crypto-js');
 var app = express();
-var fs = require('fs')
+var fs = require('fs');
+const moment = require('moment'); //lucas
+const axios = require('axios');
 
 amqp.connect('amqp://hadministradora:h4Dm1n44@10.190.4.17', function (err, conn) {
     conn.createChannel(function (err, ch) {
@@ -51,9 +53,6 @@ amqp.connect('amqp://hadministradora:h4Dm1n44@10.190.4.17', function (err, conn)
             
 
             console.log('decript: ', decrypted.toString(CryptoJS.enc.Utf8));
-            //  JSON.stringify(this.resp);
-            // return decrypted.toString(CryptoJS.enc.Utf8);
-            // res.status(200).send({ "Decriptografou": decrypted.toString(CryptoJS.enc.Utf8) });
 
 
             
@@ -67,9 +66,14 @@ amqp.connect('amqp://hadministradora:h4Dm1n44@10.190.4.17', function (err, conn)
                     console.log(msg.content.toString());
                     let contratoBeneficiario = JSON.parse(decrypted.toString(CryptoJS.enc.Utf8));
                     
-                    console.log("===== OLHA AQUI ====",contratoBeneficiario.titular.nome, contratoBeneficiario.titular.endereco);
+                    
                     collection.insertMany([contratoBeneficiario], function (err, documents) {
                     console.log({ error: err, affected: documents });
+
+                    let fornecedor = new Fornecedor(cliente.corretora)
+                    fornecedor.save((err,forne) =>{
+                            console.log('fornecedor', forne)
+                    })
                     
                     
                     })
@@ -210,15 +214,10 @@ amqp.connect('amqp://hadministradora:h4Dm1n44@10.190.4.17', function (err, conn)
                             console.log('=============RESPOSTA================',resposta.data.Messages[0])
                         
                         })
-                        
-
-                    
                     })  
-                   
                 }
                 database.close();
                 })
-                        
         }, { noAck: true });
     });
 });

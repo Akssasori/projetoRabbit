@@ -9,7 +9,7 @@
 			"url": "https://opensource.org/licenses/MIT"
 		}
 	},
-	"host": "localhost:3001",
+	"host": "api-hadministradora.hmg.marlin.com.br",
 	
 	"basePath": "/api/v1",
 	"tags": [
@@ -19,7 +19,8 @@
 		}
 	],
 	"schemes": [
-		"http"
+		"http",
+		"https"
 	],
 	"consumes": [
 		"application/json"
@@ -138,6 +139,34 @@
 				}
 			}
 		},
+
+		"/contrato_beneficiario/csv/{operadoraId}": {
+			"parameters": [
+				{
+					"name": "operadoraId",
+					"in": "path",
+					"required": true,
+					"description": "ID of operadora that we want to create csv",
+					"type": "string"
+				}
+			],
+			"get": {
+				"tags": [
+					"operadora"
+				],
+				"produces" : [ "application/msexcel" ],
+				"summary": "Get operadora with given ID and download csv",
+				"responses": {
+					"200": {
+						"description": "operadora is found",
+						
+						"schema": {
+							"$ref": ""
+						}
+					}
+				}
+			}
+		},
 		"/contrato_beneficiario/{contratoId}": {
 			"parameters": [
 				{
@@ -239,6 +268,8 @@
 				}
 			}
 		},
+
+		
 		
 		"/contrato_beneficiario/{numeroCliente}/titulos": {
 			"parameters": [
