@@ -11,6 +11,7 @@ var app = express();
 var fs = require('fs');
 const moment = require('moment'); //lucas
 const axios = require('axios');
+const Utils = require('./utils')
 
 amqp.connect('amqp://hadministradora:h4Dm1n44@10.190.4.17', function (err, conn) {
     conn.createChannel(function (err, ch) {
@@ -66,19 +67,19 @@ amqp.connect('amqp://hadministradora:h4Dm1n44@10.190.4.17', function (err, conn)
                     console.log(msg.content.toString());
                     let contratoBeneficiario = JSON.parse(decrypted.toString(CryptoJS.enc.Utf8));
                     
-                    
+                  
                     collection.insertMany([contratoBeneficiario], function (err, documents) {
                     console.log({ error: err, affected: documents });
+                   
+                    let fornecedores = db.collection('fornecedores')
+                        documents.ops.map(doc =>{
+                            Utils.fornecedorSave(fornecedores, doc.corretora)
+                        })
+                    })
 
-                    let fornecedor = new Fornecedor(cliente.corretora)
-                    fornecedor.save((err,forne) =>{
-                            console.log('fornecedor', forne)
-                    })
-                    
-                    
-                    })
                     let codigoUfIbge;
                     let dataNascimento = moment(contratoBeneficiario.titular.dataNascimento).format('DD/MM/YYYY')
+                    console.log('contratoBeneficiario.titular.endereco: ', contratoBeneficiario.titular.endereco)
                     await axios.get(`https://consulta-api.hmg.marlin.com.br/api/v1/municipios/${contratoBeneficiario.titular.endereco.uf}`, { //work2
                         headers: {
                             'Authorization': 'Bearer _mrwY32qaEeF25TTyrWuRw==',
@@ -213,10 +214,14 @@ amqp.connect('amqp://hadministradora:h4Dm1n44@10.190.4.17', function (err, conn)
                         }).then(resposta => {
                             console.log('=============RESPOSTA================',resposta.data.Messages[0])
                         
+                        }).catch(err=>{
+                            console.log('mxm fora do ar')    
                         })
-                    })  
+                    }).catch(err => {
+                        console.log(err)
+                    })                  
                 }
-                database.close();
+                    database.close();
                 })
         }, { noAck: true });
     });

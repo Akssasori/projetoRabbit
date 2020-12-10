@@ -11,6 +11,7 @@
 	},
 	"host": "api-hadministradora.hmg.marlin.com.br",
 	
+	
 	"basePath": "/api/v1",
 	"tags": [
 		{
@@ -28,20 +29,598 @@
 	"produces": [
 		"application/json"
 	],
+
+
+
+
 	"paths": {
 		"/contrato_beneficiario": {
 			"post": {
+
 				"tags": [
 					"contratos"
 				],
-				"description": "Create new contratos in system",
+				"deion": "Create new contratos in system",
 				"parameters": [
 					{
 						"name": "contratos",
 						"in": "body",
 						"description": "contratos that we want to create",
 						"schema": {
-							"$ref": "#/definitions/contratos"
+							"$ref": "#/definitions/contratos",
+
+							"properties": {
+
+								
+
+								"subcontrato": {
+									"type": "object",
+									"properties": {
+										"id": {
+											"type": "integer"	
+										}
+									}
+								},
+
+								"contrato": {
+									"type": "object",
+									"properties": {
+										"id": {
+											"type": "integer"	
+										}
+									}
+								},
+								
+								"dataVigencia": {
+									"type": "string",
+									"format": "date"
+								},
+								
+								"dataVencimento": {
+									"type": "string",
+									"format": "date"
+								},
+
+								"operadora": {
+									"type": "object",
+									"properties": {
+										"id": {
+											"type": "integer"	
+										},
+										"cnpj": {
+											"type": "number"
+										},
+										"nome": {
+											"type": "string"
+										},
+										"site": {
+											"type": "string"
+										},
+										"telefone": {
+											"type": "number"
+										}
+									}
+								},
+
+								"entidade": {
+									"type": "object",
+									"properties": {
+										"id": {
+											"type": "integer"	
+										},
+										"sigla": {
+											"type": "string"
+										},
+										"nome": {
+											"type": "string"
+										}
+									}
+								},
+
+								"plano": {
+									"type": "object",
+									"properties": {
+										"id": {
+											"type": "number"
+											
+										},
+										"nome": {
+											"type": "string"
+										},
+										"codigoANS": {
+											"type": "number"
+										},
+										"tipoContratacao": {
+											"type": "object",
+											"properties": {
+												"id": {
+													"type": "integer"
+													
+												},
+												"descricao": {
+													"type": "string"
+												}
+											}
+										},
+										"acomodacao": {
+											"type": "object",
+											"properties": {
+												"id": {
+													"type": "integer"
+													
+												},
+												"descricao": {
+													"type": "string"
+												}
+											}
+										},
+										"fatorModerador": {
+											"type": "object",
+											"properties": {
+												"id": {
+													"type": "integer",
+													"format": "int32"
+												},
+												"descricao": {
+													"type": "string"
+												}
+											}
+										},
+										"cobertura": {
+											"type": "object",
+											"properties": {
+												"id": {
+													"type": "integer",
+													"format": "int32"
+												},
+												"descricao": {
+													"type": "string"
+												}
+											}
+										},
+										"abrangenciaGeografica": {
+											"type": "object",
+											"properties": {
+												"id": {
+													"type": "integer",
+													"format": "int32"
+												},
+												"descricao": {
+													"type": "string"
+												}
+											}
+										},
+										"areaAtuacao": {
+											"type": "object",
+											"properties": {
+												"id": {
+													"type": "integer",
+													"format": "int32"
+												},
+												"descricao": {
+													"type": "string"
+												}
+											}
+										},
+										"operadora": {
+											"type": "object",
+											"properties": {
+												"id": {
+													"type": "integer",
+													"format": "int32"
+												},
+												"cnpj": {
+													"type": "number"
+												},
+												"nome": {
+													"type": "string"
+												},
+												"site": {
+													"type": "string"
+												},
+												"telefone": {
+													"type": "number"
+												}
+											}
+										},
+									
+										"adicionais": {
+											"type": "string"
+											
+										},
+										"formacaoDePreco": {
+											"type": "string"
+											
+										},
+										"quantidadeVidas": {
+											"type": "integer"
+											
+										},
+										"valorTotal": {
+											"type": "number"
+											
+										},
+										"valorTotalTabela": {
+											"type": "number"
+											
+										},
+										"recorrenciaPromocaoMeses": {
+											"type": "string"
+											
+										},
+										"indPromocional": {
+											"type": "string"
+											
+										},
+										"indPossuiOpcional": {
+											"type": "boolean"
+										}
+									}
+								},
+								"titular": {
+									"type": "object",
+									"properties": {
+
+										"id": {
+											"type": "integer",
+											"format": "int32"
+										},
+										"cpf": {
+											"type": "number"
+										},
+										"rg": {
+											"type": "number"
+										},
+										"nome": {
+											"type": "string"
+										},
+										"dataNascimento": {
+											"type": "string",
+											"format":"date"
+										},
+										"nomeMae": {
+											"type": "string"
+										},
+										"sexo": {
+											"type": "string"
+										},
+										"cns": {
+											"type": "string"
+											
+										},
+										"dnv": {
+											"type": "string"
+											
+										},
+										"email": {
+											"type": "string",
+											"format": "email"
+										},
+										"dddTelefone": {
+											"type": "number"
+											
+										},
+										"numTelefone": {
+											"type": "number"
+											
+										},
+										"dddCelular": {
+											"type": "number"
+										},
+										"numCelular": {
+											"type": "number"
+										},
+										"valor": {
+											"type": "number"
+										},
+										"idade": {
+											"type": "integer",
+											"format": "int32"
+										},
+										"numeroCarteirinha": {
+											"type": "number"
+											
+										},
+
+										"estadoCivil": {
+											"type": "object",
+											"properties": {
+												"id": {
+													"type": "integer",
+													"format": "int32"
+												},
+												"descricao": {
+													"type": "string"
+												}
+											}
+										},
+										"orgaoEmissor": {
+											"type": "object",
+											"properties": {
+												"id": {
+													"type": "integer",
+													"format": "int32"
+												},
+												"descricao": {
+													"type": "string"
+												}
+											}
+										},
+										"endereco": {
+											"type": "object",
+											"properties": {
+												"id": {
+													"type": "integer",
+													"format": "int32"
+												},
+												"cep": {
+													"type": "number"
+												},
+												"logradouro": {
+													"type": "string"
+												},
+												"numero": {
+													"type": "number"
+												},
+												"complemento": {
+													"type": "string"
+												},
+												"bairro": {
+													"type": "string"
+												},
+												"cidade": {
+													"type": "string"
+												},
+												"uf": {
+													"type": "string"
+													
+												}
+											}
+										},
+										"representanteLegal": {
+											"type": "string"
+											
+										},
+										"carencia": {
+											"type": "string"
+											
+										},
+										"dependente": {
+											"type": "array",
+											"items": {
+												
+												"properties": {
+													"id": {
+														"type": "integer"
+														
+													},
+													"cpf": {
+														"type": "number"
+													},
+													"nome": {
+														"type": "string"
+													},
+													"dataNascimento": {
+														"type": "string"
+														
+													},
+													"nomeMae": {
+														"type": "string"
+													},
+													"sexo": {
+														"type": "string"
+													},
+													"cns": {
+														"type": "string"
+													},
+													"dnv": {
+														"type": "string"
+													},
+													"valorPlano": {
+														"type": "number"
+													},
+													"idade": {
+														"type": "integer"
+														
+													},
+													"numeroCarteirinha": {
+														"type": "number"
+														
+													},
+													"estadoCivil": {
+														"type": "object",
+														"properties": {
+															"id": {
+																"type": "integer"
+																
+															},
+															"descricao": {
+																"type": "string"
+															}
+														}
+													},
+													"grauParentesco": {
+														"type": "object",
+														"properties": {
+															"id": {
+																"type": "integer"
+																
+															},
+															"descricao": {
+																"type": "string"
+															}
+														}
+													},
+													"carencia": {
+														"type": "string"
+														
+													}
+												}
+											}
+										},
+										"profissao": {
+											"type": "object",
+											"properties": {
+												"id": {
+													"type": "integer",
+													"format": "int32"
+												},
+												"descricao": {
+													"type": "string"
+												}
+											}
+										}
+							
+									}
+								},
+								
+								"corretora": {
+									"type": "object",
+									"properties": {
+										"id": {
+											"type": "integer"
+											
+										},
+										"cnpj": {
+											"type": "number"
+										},
+										"nome": {
+											"type": "string"
+										},
+										"razaoSocial": {
+											"type": "string"
+											
+										},
+										"possuiSupervisor": {
+											"type": "boolean"
+										},
+										"codigo": {
+											"type": "number"
+										},
+										"email": {
+											"type": "string",
+											"format":"email"
+										},
+										"indAtivo": {
+											"type": "string"
+											
+										},
+										"indLiberacaoColaborador": {
+											"type": "string"
+											
+										}
+									}
+								},
+								"administradora": {
+									"type": "object",
+									"properties": {
+										"id": {
+											"type": "integer",
+											"format": "int32"
+										},
+										"codigoANS": {
+											"type": "number"
+										},
+										"site": {
+											"type": "string"
+										},
+										"telefone": {
+											"type": "number"
+										},
+										"cnpj": {
+											"type": "number"
+										},
+										"nomeFantasia": {
+											"type": "string"
+										},
+										"razaoSocial": {
+											"type": "string"
+										}
+									}
+								},
+								"corretor": {
+									"type": "object",
+									"properties": {
+										"id": {
+											"type": "integer",
+											"format": "int32"
+										},
+										"cpf": {
+											"type": "number"
+										},
+										"nome": {
+											"type": "string"
+										},
+										"email": {
+											"type": "string",
+											"format":"email"
+										},
+										"celular": {
+											"type": "number"
+										}
+									}
+								},
+								"supervisor": {
+									"type": "object",
+									"properties": {
+										"corretor": {
+											"type": "object",
+											"properties": {
+												"id": {
+													"type": "integer",
+													"format": "int32"
+												},
+												"cpf": {
+													"type": "number"
+												},
+												"nome": {
+													"type": "string"
+												},
+												"email": {
+													"type": "string",
+													"format":"email"
+												},
+												"celular": {
+													"type": "number"
+													
+												}
+											}
+										},
+										"corretora": {
+											"type": "string"
+											
+										}
+									}
+								},
+							
+								"valorTotal": {
+									"type": "number"
+								},
+								"valorTaxaAssociativa": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"taxaCadastro": {
+									"type": "integer",
+									"format": "int32"
+								},
+								"valorTotalMensal": {
+									"type": "number"
+								},
+								"numeroProposta": {
+									"type": "number"
+								},
+								"qtdRecorrenciaAnualTaxaAssociativa": {
+									"type": "number"
+									
+								},
+								"descricaoRecorrenciaTaxaAssociativa": {
+									"type": "string"
+								}
+
+								
+							
+							}
 						}
 					}
 				],
@@ -179,7 +758,7 @@
 			],
 			"get": {
 				"tags": [
-					"contrato"
+					"contratos"
 				],
 				"summary": "Get contrato with given ID",
 				"responses": {
@@ -190,45 +769,8 @@
 						}
 					}
 				}
-			},
-			"delete": {
-				"summary": "Delete Contrato with given ID",
-				"tags": [
-					"contrato"
-				],
-				"responses": {
-					"200": {
-						"description": "Contrato is deleted",
-						"schema": {
-							"$ref": "#/definitions/contrato"
-						}
-					}
-				}
-			},
-			"put": {
-				"summary": "Update Contrato with give ID",
-				"tags": [
-					"contrato"
-				],
-				"parameters": [
-					{
-						"name": "contrato",
-						"in": "body",
-						"description": "Contrato with new values of properties",
-						"schema": {
-							"$ref": "#/definitions/contrato"
-						}
-					}
-				],
-				"responses": {
-					"200": {
-						"description": "contrato is updated",
-						"schema": {
-							"$ref": "#/definitions/contrato"
-						}
-					}
-				}
 			}
+
 		},
 		"/contrato_beneficiario/{contratoId}/cobrancas": {
 			"parameters": [
@@ -240,21 +782,15 @@
 					"type": "string"
 				}
 			],
+		
 			"post": {
 				"tags": [
 					"contratos"
 				],
 				"description": "Create new contratos in system",
-				"parameters": [
-					{
-						"name": "contratos",
-						"in": "body",
-						"description": "contratos that we want to create",
-						"schema": {
-							"$ref": "#/definitions/contratos"
-						}
-					}
-				],
+				"requestBody": {	
+				},
+				
 				"produces": [
 					"application/json"
 				],
@@ -376,12 +912,13 @@
 		"/contrato_beneficiario/{idFornecedor}/putFornecedor": {
 			"parameters": [
 				{
-					"name": "IdFornecedor",
+					"name": "idFornecedor",
 					"in": "path",
 					"required": true,
 					"description": "ID of contratos that we want to find",
 					"type": "string"
 				}
+				
 			],
 			
 			"put": {
@@ -393,9 +930,132 @@
 					{
 						"name": "fornecedores",
 						"in": "body",
-						"description": "fornecedor",
+						"deion": "fornecedor",
 						"schema": {
-							"$ref": "#/definitions/fornecedor"
+							"$ref": "#/definitions/fornecedor",
+
+							
+										
+										"properties": {
+
+											"sequenciadoRegistro": {
+												"type": "integer"
+												
+											},
+											"codigo": {
+												"type": "number"
+												
+											},
+											"tipodePessoa":{
+												"type":"string"
+											},
+											"cpfoucnpj":{
+												"type":"number"
+											},
+											"nome":{
+												"type":"string"
+											},
+											"nomeFantansia":{
+												"type":"string"
+											},
+											"tipodoLocaldoIndicadordeInscricaoEstadual":{
+												"type":"string"
+											},
+											"inscricao":{
+												"type":"number"
+											},
+											"inscricaoMunicicipal":{
+												"type":"number"
+											},
+											"inscricaoSuframa":{
+												"type":"number"
+											},
+											"fornecedorERural":{
+												"type":"boolean"
+											},
+											"cooperativa":{
+												"type":"string"
+											},
+											"inscricaonoINSS":{
+												"type":"number"
+											},
+											"classenoINSS":{
+												"type":"string"
+											},
+											"tetoMaximonoINSS":{
+												"type":"number"
+											},
+											"salarioBase":{
+												"type":"number"
+											},
+											"pisPasep":{
+												"type":"number"
+											},
+											"quantidadedeDependente":{
+												"type":"number"
+											},
+											"codigoBrasileirodeOcupacao":{
+												"type":"number"
+											},
+											"datadeNascimento":{
+												"type":"string",
+												"format":"date"
+											},
+											"estadoCivil":{
+												"type":"string"
+											},
+											"nacionalidade":{
+												"type":"string"
+											},
+											"codigodoPais":{
+												"type":"number"
+											},
+											"pais":{
+												"type":"string"
+											},
+											"cep":{
+												"type":"number"
+
+											},
+											"endereco":{
+												"type":"string"
+											},
+											"numerodoEndereco":{
+												"type":"number"
+											},
+											"complementodoEndereco":{
+												"type":"string"
+											},
+											"bairro":{
+												"type":"string"
+											},
+											"codigodaCidade":{
+												"type":"number"
+											},
+											"cidade":{
+												"type":"string"
+											},
+											"uf":{
+												"type":"string"
+											},
+											"telefone":{
+												"type":"number"
+											},
+											"email":{
+												"type":"string"
+											},
+											"ativo":{
+												"type":"string"
+											},
+											"homologado":{
+												"type":"string"
+											},
+											"informacaoesComplementares":{
+												"type":"string"
+											}
+										}	
+
+							
 						}
 					}
 				],
@@ -412,568 +1072,5 @@
 
 
 		
-	},
-	"definitions": {
-		"contratos": {
-			"id": {
-				"type": "integer",
-				"format": "int32"
-			},
-			"subcontrato": {
-				"type": "object",
-				"properties": {
-					"id": {
-						"type": "integer",
-						"format": "int32"
-					}
-				}
-			},
-			"contrato": {
-				"type": "object",
-				"properties": {
-					"id": {
-						"type": "integer",
-						"format": "int32"
-					}
-				}
-			},
-			"dataVigencia": {
-				"type": "string"
-			},
-			"dataVencimento": {
-				"type": "string"
-			},
-			"operadora": {
-				"type": "object",
-				"properties": {
-					"id": {
-						"type": "integer",
-						"format": "int32"
-					},
-					"cnpj": {
-						"type": "string"
-					},
-					"nome": {
-						"type": "string"
-					},
-					"site": {
-						"type": "string"
-					},
-					"telefone": {
-						"type": "string"
-					}
-				}
-			},
-			"entidade": {
-				"type": "object",
-				"properties": {
-					"id": {
-						"type": "integer",
-						"format": "int32"
-					},
-					"sigla": {
-						"type": "string"
-					},
-					"nome": {
-						"type": "string"
-					}
-				}
-			},
-			"plano": {
-				"type": "object",
-				"properties": {
-					"id": {
-						"type": "integer",
-						"format": "int32"
-					},
-					"nome": {
-						"type": "string"
-					},
-					"codigoANS": {
-						"type": "string"
-					},
-					"tipoContratacao": {
-						"type": "object",
-						"properties": {
-							"id": {
-								"type": "integer",
-								"format": "int32"
-							},
-							"descricao": {
-								"type": "string"
-							}
-						}
-					},
-					"acomodacao": {
-						"type": "object",
-						"properties": {
-							"id": {
-								"type": "integer",
-								"format": "int32"
-							},
-							"descricao": {
-								"type": "string"
-							}
-						}
-					},
-					"fatorModerador": {
-						"type": "object",
-						"properties": {
-							"id": {
-								"type": "integer",
-								"format": "int32"
-							},
-							"descricao": {
-								"type": "string"
-							}
-						}
-					},
-					"cobertura": {
-						"type": "object",
-						"properties": {
-							"id": {
-								"type": "integer",
-								"format": "int32"
-							},
-							"descricao": {
-								"type": "string"
-							}
-						}
-					},
-					"abrangenciaGeografica": {
-						"type": "object",
-						"properties": {
-							"id": {
-								"type": "integer",
-								"format": "int32"
-							},
-							"descricao": {
-								"type": "string"
-							}
-						}
-					},
-					"areaAtuacao": {
-						"type": "object",
-						"properties": {
-							"id": {
-								"type": "integer",
-								"format": "int32"
-							},
-							"descricao": {
-								"type": "string"
-							}
-						}
-					},
-					"operadora": {
-						"type": "object",
-						"properties": {
-							"id": {
-								"type": "integer",
-								"format": "int32"
-							},
-							"cnpj": {
-								"type": "string"
-							},
-							"nome": {
-								"type": "string"
-							},
-							"site": {
-								"type": "string"
-							},
-							"telefone": {
-								"type": "string"
-							}
-						}
-					},
-					"adicionais": {
-						"type": "string",
-						"format": "nullable"
-					},
-					"formacaoDePreco": {
-						"type": "string",
-						"format": "nullable"
-					},
-					"quantidadeVidas": {
-						"type": "integer",
-						"format": "int32"
-					},
-					"valorTotal": {
-						"type": "string",
-						"format": "nullable"
-					},
-					"valorTotalTabela": {
-						"type": "string",
-						"format": "nullable"
-					},
-					"recorrenciaPromocaoMeses": {
-						"type": "string",
-						"format": "nullable"
-					},
-					"indPromocional": {
-						"type": "string",
-						"format": "nullable"
-					},
-					"indPossuiOpcional": {
-						"type": "boolean"
-					}
-				}
-			},
-			"titular": {
-				"type": "object",
-				"properties": {
-					"id": {
-						"type": "integer",
-						"format": "int32"
-					},
-					"cpf": {
-						"type": "string"
-					},
-					"rg": {
-						"type": "string"
-					},
-					"nome": {
-						"type": "string"
-					},
-					"dataNascimento": {
-						"type": "string"
-					},
-					"nomeMae": {
-						"type": "string"
-					},
-					"sexo": {
-						"type": "string"
-					},
-					"cns": {
-						"type": "string",
-						"format": "nullable"
-					},
-					"dnv": {
-						"type": "string",
-						"format": "nullable"
-					},
-					"email": {
-						"type": "string"
-					},
-					"dddTelefone": {
-						"type": "string",
-						"format": "nullable"
-					},
-					"numTelefone": {
-						"type": "string",
-						"format": "nullable"
-					},
-					"dddCelular": {
-						"type": "string"
-					},
-					"numCelular": {
-						"type": "string"
-					},
-					"valor": {
-						"type": "number"
-					},
-					"idade": {
-						"type": "integer",
-						"format": "int32"
-					},
-					"numeroCarteirinha": {
-						"type": "string",
-						"format": "nullable"
-					},
-					"estadoCivil": {
-						"type": "object",
-						"properties": {
-							"id": {
-								"type": "integer",
-								"format": "int32"
-							},
-							"descricao": {
-								"type": "string"
-							}
-						}
-					},
-					"orgaoEmissor": {
-						"type": "object",
-						"properties": {
-							"id": {
-								"type": "integer",
-								"format": "int32"
-							},
-							"descricao": {
-								"type": "string"
-							}
-						}
-					},
-					"endereco": {
-						"type": "object",
-						"properties": {
-							"id": {
-								"type": "integer",
-								"format": "int32"
-							},
-							"cep": {
-								"type": "string"
-							},
-							"logradouro": {
-								"type": "string"
-							},
-							"numero": {
-								"type": "string"
-							},
-							"complemento": {
-								"type": "string"
-							},
-							"bairro": {
-								"type": "string"
-							},
-							"cidade": {
-								"type": "string"
-							},
-							"uf": {
-								"type": "string"
-							}
-						}
-					},
-					"representanteLegal": {
-						"type": "string",
-						"format": "nullable"
-					},
-					"carencia": {
-						"type": "string",
-						"format": "nullable"
-					},
-					"dependente": {
-						"type": "array",
-						"items": {
-							"type": "object",
-							"properties": {
-								"id": {
-									"type": "integer",
-									"format": "int32"
-								},
-								"cpf": {
-									"type": "string"
-								},
-								"nome": {
-									"type": "string"
-								},
-								"dataNascimento": {
-									"type": "string"
-								},
-								"nomeMae": {
-									"type": "string"
-								},
-								"sexo": {
-									"type": "string"
-								},
-								"cns": {
-									"type": "string"
-								},
-								"dnv": {
-									"type": "string"
-								},
-								"valorPlano": {
-									"type": "number"
-								},
-								"idade": {
-									"type": "integer",
-									"format": "int32"
-								},
-								"numeroCarteirinha": {
-									"type": "string",
-									"format": "nullable"
-								},
-								"estadoCivil": {
-									"type": "object",
-									"properties": {
-										"id": {
-											"type": "integer",
-											"format": "int32"
-										},
-										"descricao": {
-											"type": "string"
-										}
-									}
-								},
-								"grauParentesco": {
-									"type": "object",
-									"properties": {
-										"id": {
-											"type": "integer",
-											"format": "int32"
-										},
-										"descricao": {
-											"type": "string"
-										}
-									}
-								},
-								"carencia": {
-									"type": "string",
-									"format": "nullable"
-								}
-							}
-						}
-					},
-					"profissao": {
-						"type": "object",
-						"properties": {
-							"id": {
-								"type": "integer",
-								"format": "int32"
-							},
-							"descricao": {
-								"type": "string"
-							}
-						}
-					}
-				}
-			},
-			"corretora": {
-				"type": "object",
-				"properties": {
-					"id": {
-						"type": "integer",
-						"format": "int32"
-					},
-					"cnpj": {
-						"type": "string"
-					},
-					"nome": {
-						"type": "string"
-					},
-					"razaoSocial": {
-						"type": "string",
-						"format": "nullable"
-					},
-					"possuiSupervisor": {
-						"type": "boolean"
-					},
-					"codigo": {
-						"type": "string"
-					},
-					"email": {
-						"type": "string"
-					},
-					"indAtivo": {
-						"type": "string",
-						"format": "nullable"
-					},
-					"indLiberacaoColaborador": {
-						"type": "string",
-						"format": "nullable"
-					}
-				}
-			},
-			"administradora": {
-				"type": "object",
-				"properties": {
-					"id": {
-						"type": "integer",
-						"format": "int32"
-					},
-					"codigoANS": {
-						"type": "string"
-					},
-					"site": {
-						"type": "string"
-					},
-					"telefone": {
-						"type": "string"
-					},
-					"cnpj": {
-						"type": "string"
-					},
-					"nomeFantasia": {
-						"type": "string"
-					},
-					"razaoSocial": {
-						"type": "string"
-					}
-				}
-			},
-			"corretor": {
-				"type": "object",
-				"properties": {
-					"id": {
-						"type": "integer",
-						"format": "int32"
-					},
-					"cpf": {
-						"type": "string"
-					},
-					"nome": {
-						"type": "string"
-					},
-					"email": {
-						"type": "string"
-					},
-					"celular": {
-						"type": "string"
-					}
-				}
-			},
-			"supervisor": {
-				"type": "object",
-				"properties": {
-					"id": {
-						"type": "integer",
-						"format": "int32"
-					},
-					"corretor": {
-						"type": "object",
-						"properties": {
-							"id": {
-								"type": "integer",
-								"format": "int32"
-							},
-							"cpf": {
-								"type": "string"
-							},
-							"nome": {
-								"type": "string"
-							},
-							"email": {
-								"type": "string"
-							},
-							"celular": {
-								"type": "string",
-								"format": "nullable"
-							}
-						}
-					},
-					"corretora": {
-						"type": "string",
-						"format": "nullable"
-					}
-				}
-			},
-			"valorTotal": {
-				"type": "number"
-			},
-			"valorTaxaAssociativa": {
-				"type": "integer",
-				"format": "int32"
-			},
-			"taxaCadastro": {
-				"type": "integer",
-				"format": "int32"
-			},
-			"valorTotalMensal": {
-				"type": "number"
-			},
-			"numeroProposta": {
-				"type": "string"
-			},
-			"qtdRecorrenciaAnualTaxaAssociativa": {
-				"type": "string",
-				"format": "nullable"
-			},
-			"descricaoRecorrenciaTaxaAssociativa": {
-				"type": "string"
-			}
-		},
-		"contrato": {
-			"type": "array",
-			"$ref": "#/definitons/contratos"
-		}
 	}
-}
+}	

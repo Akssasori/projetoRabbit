@@ -1,6 +1,8 @@
 const express = require("express");
 require("./db/DB");
 const Contrato = require('./db/Contrato');
+const ContasPagar = require('./db/ContasPagar');
+const ContasReceber = require('./db/ContasReceber');
 const router = express.Router();
 const bodyParser = require('body-parser');
 const swaggerUi = require('swagger-ui-express');
@@ -28,24 +30,33 @@ app.use(bodyParser.json());
 
 var createContrato = function (req, res, next) {
 
-	let cliente = req.body;
-	let dataNascimento = moment(cliente.titular.dataNascimento).format('DD/MM/YYYY')
+	let beneficiario = req.body;
+	let dataNascimento = moment(beneficiario.titular.dataNascimento).format('DD/MM/YYYY')
 	let contrato = new Contrato(req.body);
 
-
 	contrato.save(async function (err, contrato) {
+		console.log(contrato.titular.endereco.uf)
 
 		if (err) {
 			next(err);
 		} else {
 
-			let fornecedor = new Fornecedor(cliente.corretora)
-			fornecedor.save((err,forne) =>{
-					console.log('fornecedor', forne)
+			let obj = {
+				cpfoucnpj : beneficiario.corretora.cnpj,
+				nome : beneficiario.corretora.nome,
+				codigo : beneficiario.corretora.codigo,
+				email : beneficiario.corretora.email,
+				nomeFantasia : beneficiario.corretora.nome
+			}
+
+			let fornecedor = new Fornecedor(obj)
+
+			fornecedor.save((err, forne) => {
+				// console.log('fornecedor', forne)
 			})
-			
+
 			let codigoUfIbge;
-			await axios.get(`https://consulta-api.hmg.marlin.com.br/api/v1/municipios/${contrato.titular.endereco.uf}`, { 
+			await axios.get(`https://consulta-api.hmg.marlin.com.br/api/v1/municipios/${contrato.titular.endereco.uf}`, {
 				headers: {
 					'Authorization': 'Bearer _mrwY32qaEeF25TTyrWuRw==',
 					'Accept': 'application/json',
@@ -55,7 +66,7 @@ var createContrato = function (req, res, next) {
 				resp.data.map(data => {
 					codigoUfIbge = data.CodigoIbge
 				})
-				await axios.post('https://prjqualivida.mxmwebmanager.com.br/api/InterfacedoCliente/Gravar', {
+				await axios.post('https://prjqvsaude.mxmwebmanager.com.br/api/InterfacedoCliente/Gravar', {
 					AutheticationToken: {
 						Username: "TESTEAPI.QUA",
 						Password: "TST90",
@@ -88,6 +99,7 @@ var createContrato = function (req, res, next) {
 								ComplementodoEndereco: contrato.titular.endereco.complemento,
 								Bairro: contrato.titular.endereco.bairro,
 								Uf: contrato.titular.endereco.uf,
+								// Uf: resp.data[0].Uf,
 								Cidade: contrato.titular.endereco.cidade,
 								Email: contrato.titular.email,
 								Telefone: contrato.titular.numCelular,
@@ -177,11 +189,13 @@ var createContrato = function (req, res, next) {
 					}
 				}).then(resp => {
 					res.json({ "resposta Servidor MXM": resp.data.Messages[0], "Dados Enviados": JSON.parse(resp.config.data), "Processo :": resp.data.Data });
+				}).catch(err=>{
+					res.json('endpoint fora do ar')
 				})
-
-			
+			}).catch(error =>{
+				res.json('Digite o UF')
 			})
-		}
+			}
 	});
 };
 
@@ -200,18 +214,10 @@ var getFindContrato = function (req, res, next) {
 		let primeiro = Utils.retornaCampo(1, administradora);
 		let segundo = Utils.retornaCampo(2, operadora)
 		let terceiro = Utils.retornaCampo(3, dataNascimento);
-		let quarto = nomeTitular && nomeTitular !== undefined ? Utils.retornaCampo(4, nomeTitular) : null;
+		let quarto = Utils.retornaCampo(4, nomeTitular);
 		let quinto = Utils.retornaCampo(5, entidade);
 
-		let propertyArray = [primeiro, segundo, terceiro, quarto, quinto]
-		let validPropertyArray = []
-
-		propertyArray.map(v => {
-			if (v && v !== undefined && v !== '')
-			validPropertyArray.push(v)
-		})
-
-		Contrato.find({ $and: validPropertyArray })
+		Contrato.find({ $and: [primeiro, segundo, terceiro, quarto, quinto] })
 			.then(resp => {
 				res.json(resp);
 			})
@@ -231,6 +237,7 @@ var getFindContrato = function (req, res, next) {
 };
 
 var getFindByIDContrato = function (req, res, next) {
+	console.log('veio do swagger: ',req.params.id)
 	let vcodigo = req.params.id;
 	Contrato.findById({ _id: vcodigo }).then(dados => {
 		res.json(dados);
@@ -244,7 +251,7 @@ var postContratoCobranca = function (req, res, next) {
 		let dataVencimento = moment(data.titular.dataVencimento).format('DDMMYYYY')
 		let dataVigencia = moment(data.titular.dataVigencia).format('DDMMYYYY')
 
-		axios.post('https://prjqualivida.mxmwebmanager.com.br/api/InterfacedoContasPagarReceber/Gravar', {
+		axios.post('https://prjqvsaude.mxmwebmanager.com.br/api/InterfacedoContasPagarReceber/Gravar', {
 			AutheticationToken: {
 				Username: "TESTEAPI.QUA",
 				Password: "TST90",
@@ -351,7 +358,7 @@ var getTitulo = function (req, res, next) {
 	let cliente = req.params.id
 	Contrato.find().then(data => {
 		// let job = new CronJob('00 57 11 29 * *', function () {
-		axios.post('https://prjqualivida.mxmwebmanager.com.br/api/InterfacedoContasPagarReceber/ConsultaTituloReceber', {
+		axios.post('https://prjqvsaude.mxmwebmanager.com.br/api/InterfacedoContasPagarReceber/ConsultaTituloReceber', {
 
 			AutheticationToken: {
 				Username: "TESTEAPI.QUA",
@@ -432,6 +439,8 @@ var getFindByIdCsv = function (req, res){
 			let objUsado ;
 
 			if (operadoraCodigo === '1') {
+				console.log("unimed", operadoraCodigo)
+
 
 				let objUnimed = {
 					operadora: "UNIMED",
@@ -578,25 +587,271 @@ var getFornecedor = function (req, res, next) {
 };
 
 var putFornecedor = function (req, res, next) {
-	
-	let idFornecedor = ObjectId(req.params.id)
+	// console.log('veio do swagger: ',req.params.id)
+	let idFornecedor =  ObjectId (req.params.id)
 	let fornecedor = req.body
+
+	console.log("**************", req.body)
+	console.log("*****FORNECEDOR*********", fornecedor)
 	Fornecedor.updateOne(
 			{
 				_id:idFornecedor
 			},
 			{
 				$set:{
+						
+							sequenciadoRegistro: fornecedor.sequenciadoRegistro,
+							codigo : fornecedor.codigo,
+							tipodePessoa: fornecedor.tipodePessoa,
+							cpfoucnpj : fornecedor.cpfoucnpj,
+							nome : fornecedor.nome,
+							nomeFantasia : fornecedor.nonomeFantasia,
+							tipodoLocaldoIndicadordeInscricaoEstadual: fornecedor.tipodoLocaldoIndicadordeInscricaoEstadual,
+							inscricao: fornecedor.inscricao,
+							inscricaoMunicicipal: fornecedor.inscricaoMunicipal,
+							inscricaoSuframa: fornecedor.inscricaoSuframa,
+							fornecedorERural: fornecedor.fornecedorERural,
+							cooperativa: fornecedor.cooperativa,
+							inscricaonoINSS: fornecedor.inscricaoInss,
+							classenoINSS: fornecedor.classenoINSS,
+							tetoMaximonoINSS: fornecedor.tetoMaximonoINSS,
+							salarioBase: fornecedor.salarioBase,
+							pisPasep: fornecedor.pisPasep,
+							quantidadedeDependente: fornecedor.quantidadedeDependente,
+							codigoBrasileirodeOcupacao: fornecedor.codigoBrasileirodeOcupacao,
+							datadeNascimento: fornecedor.dataNascimento,
+							estadoCivil: fornecedor.estadoCivil,
+							nacionalidade: fornecedor.nacionalidade,
+							codigodoPais: fornecedor.codigodoPais,
+							pais: fornecedor.pais,
+							cep: fornecedor.cep,
+							endereco: fornecedor.endereco,
+							numerodoEndereco: fornecedor.numerodoEndereco,
+							complementodoEndereco: fornecedor.complemetodoEndereco,
+							bairro: fornecedor.bairro,
+							codigodaCidade: fornecedor.codigoCidade,
+							cidade: fornecedor.cidade,
+							uf: fornecedor.uf,
+							telefone: fornecedor.telefone,
+							email: fornecedor.email,
+							ativo: fornecedor.indAtivo,
+							homologado: fornecedor.indLiberacaoColaborador,
+							informacaoesComplementares: fornecedor.infomacoesComplementares
+						
 					
-					cnpj:parseInt(fornecedor.cnpj),
-					nome:fornecedor.nome,
-					razaoSocial:fornecedor.razaoSocial,
-					possuiSupervisor:fornecedor.possuiSupervisor,
-					codigo:fornecedor.codigo,
-					email:fornecedor.email,
-					indAtivo:fornecedor.indAtivo,
-					indLiberacaoColaborador:fornecedor.indLiberacaoColaborador
+			
+				}
+			}	
+			
+		)
+		.then(resp =>{
+		res.json(resp);
+		console.log("---" ,fornecedor);
+	})
+	
+	
+};
+
+var createFornecedor = function (req, res) { //mxm
+	let idFornecedor = ObjectId(req.params.idFornecedor);
+	console.log('idFornecedor:', idFornecedor)
+	Fornecedor.findById({_id: idFornecedor}).then(data => {
+		console.log("*****",data);
+
+		axios.post('https://prjqvsaude.mxmwebmanager.com.br/api/InterfacedoFornecedor/Gravar', {
+			AutheticationToken: {
+				Username: "TESTEAPI.QUA",
+				Password: "TST90",
+				EnvironmentName: "QUALIVIDAPROJ"				
+			},
+			
+			Data: {
+				InterfacedoFornecedor: [
+					{
+						SequenciadoRegistro: data.id,
+						Codigo: data.codigo,
+						TipodePessoa: data.tipodePessoa, 
+						CPFouCNPJ: data.cpf,
+						Nome: data.nome,
+						NomeFantansia: data.nome,
+						TipodoLocaldoIndicadordeInscricaoEstadual: data.TipodoLocaldoIndicadordeInscricaoEstadual,
+						Inscricao: data.inscricao,
+						InscricaoMunicicipal: data.inscricaoMunicipal,
+						InscricaoSuframa: data.inscricaoSuframa,
+						FornecedorERural: data.fornecedorERural,
+						Cooperativa: data.cooperativa,
+						InscricaonoINSS: data.inscricaoInss,
+						ClassenoINSS: data.classenoINSS,
+						TetoMaximonoINSS: data.tetoMaximonoINSS,
+						SalarioBase: data.salarioBase,
+						PisPasep: data.pisPasep,
+						QuantidadedeDependente: data.quantidadedeDependente,
+						CodigoBrasileirodeOcupacao: data.codigoBrasileirodeOcupacao,
+						DatadeNascimento: data.dataNascimento,
+						EstadoCivil: data.estadoCivil,
+						Nacionalidade: data.nacionalidade,
+						CodigodoPais: data.codigodoPais,
+						Pais: data.pais,
+						Cep: data.cep,
+						Endereco: data.endereco,
+						NumerodoEndereco: data.numerodoEndereco,
+						ComplementodoEndereco: data.complemetodoEndereco,
+						Bairro: data.bairro,
+						CodigodaCidade: data.codigodoPais,
+						Cidade: data.cidade,
+						Uf: data.uf,
+						Telefone: data.telefone,
+						Email: data.email,
+						Ativo: data.indAtivo,
+						Homologado: data.indLiberacaoColaborador,
+						InformacaoesComplementares: data.infomacoesComplementares,
+					}
+				]
+			}
+		
+		}).then(resp => {
+			res.json({ "resposta Servidor MXM": resp.data.Messages[0], "Dados Enviados": JSON.parse(resp.config.data), "Processo :": resp.data.Data });
+			console.log("---" ,data);
+		})
+		
+	})
+	
+}
+
+var createContasPagar = function (req, res, next) {
+	let idFornecedor = ObjectId(req.params.idFornecedor);
+	console.log('idFornecedor:', idFornecedor)
+	Fornecedor.findById({_id: idFornecedor}).then(data => {
+		// console.log("*****",data);
+		let contasPagar = new ContasPagar(req.body);
+		
+		
+		contasPagar.save(async function (err, contasPagar){
+			if (err){
+				next(err);
+			} else {
+				res.
+				
+		 axios.post('https://prjqvsaude.mxmwebmanager.com.br/api/InterfacedoContasPagarReceber/Gravar',{
+			AutheticationToken: {
+				Username: "TESTEAPI.QUA",
+				Password: "TST90",
+				EnvironmentName: "QUALIVIDAPROJ"				
+			},
+			Data: {
+				InterfacedoContasPagarReceber: [
+					{
+						SequenciadoRegistro: "1",
+						Identificacao:"PP",
+						CodigoClienteFornecedor: "14270428000169", 
+						NumerodoTitulo: "3012",
+						DocumentoFiscal:"3012",
+						EmpresaEmitente: "001",
+						Filial: "00",
+						EmpresaRecebedora: "001",
+						TipodeTitulo: "RP",
+						DatadeEmissao: "",
+						DatadaEntrada: "",
+						DatadeVencimento: "",
+						DatadaProgramacao: "",
+						CodigodaMoeda: "BRL",
+						ValordoTitulo: "1500,00",
+						TipodeCobranca: "BL",
+						Banco: "sd",
+						Agencia: "sd",
+						Portador: "sd",
+						Observacao: "Teste de integração",
+						ValordeDesconto: "sd",
+						DatadoDesconto: "sd",
+						ValordeBonificacao: "sd",
+						ValordePermanencia: "sd",
+						ValordeMulta: "sd",
+						ValordeAntecipacao: "sd",
+						CodigodoIRRF: "sd",
+						ValordoIRRF: "sd",
+						CodigodoINSS: "sd",
+						ValordoINSS: "sd",
+						CodigodoISS: "sd",
+						ValordoISS: "sd",
+						EnderecodeCobranca: "sd",
+						CondicaodePagamento: "sd",
+						CodigodoPIS: "sd",
+						ValordoPIS: "sd",
+						CodigodoCOFINS: "sd",
+						ValordoCOFINS: "sd",
+						CodigodaContribuicaoSocial: "sd",
+						ValordaContribuicaoSocial: "sd",
+						CodigodoINSSI: "sd",
+						INSSIDED: "sd",
+						ValordeCotacaodaProvisao: "sd",
+						CodigodaContaDocumento: "sd",
+						NumerodoCheque: "sd",
+						Nominal: "sd",
+						ChequeNominal: "sd",
+						BaixadeCheque: "sd",
+						DatadeCompetencia: "sd",
+						CodigodeControle: "sd",
+						BasedeCalculoIRRF: "sd",
+						BasedeCalculoINSS: "sd",
+						BasedeCalculoISS: "sd",
+						BasedeCalculoPIS: "sd",
+						BasedeCalculoCOFINS: "sd",
+						BasedeCalculoCSOCIAL: "sd",
+						BasedeCalculoINSSI: "sd",
+						BasedeCalculoSEST: "sd",
+						CodigodoTipodeRendimentoDIRF: "sd",
+						CodigodaFormadeTributacaoDIRF: "sd",
+						CodigoSRFdeArreacadacaodoImposto: "sd",
+						CodigodaObra: "sd",
+						CodigoFornecedorBeneficiario: "sd",
+						CodigoDiferimento: "sd",
+						NomeArquivoExtencao: "sd",
+						InterfaceGrupoPagarReceber: [
+						  {
+							SequenciadoGrupoPagarReceber: "1",
+							CodigodoFornecedor: "14270428000169",
+							NumerodoTitulo: "3012",
+							CodigodoGrupo: "201.2",
+							NumerodoCentrodeCusto: "40005",
+							ValordoGrupo: "1500,00",	
+							PlanodeCentrodeCusto: "QLV",
+							Historico: "Teste de integração"
+						  }
+						]
+					}
+				]
+			}
+		 }).then(resp => {
+			res.json({ "resposta Servidor MXM": resp.data.Messages[0], "Dados Enviados": JSON.parse(resp.config.data), "Processo :": resp.data.Data });
+			console.log("---" ,data);
+			console.log("123/////",resp.data.Messages[0])
+		 })
+		}
+	})
+		
+	})
+	
+}
+
+var putContasPagar = function (req, res, next) {
+	
+	let idFornecedor = ObjectId(req.params.id)
+	let contaspagar = req.body
+	ContasPagar.updateOne(
+			{
+				_id:idFornecedor
+			},
+			{
+				$set:{
 					
+					// cnpj:parseInt(fornecedor.cnpj),
+					// nome:fornecedor.nome,
+					// razaoSocial:fornecedor.razaoSocial,
+					// possuiSupervisor:fornecedor.possuiSupervisor,
+					// codigo:fornecedor.codigo,
+					// email:fornecedor.email,
+					// indAtivo:fornecedor.indAtivo,
+					// indLiberacaoColaborador:fornecedor.indLiberacaoColaborador		
 			}
 			}
 		)
@@ -606,76 +861,129 @@ var putFornecedor = function (req, res, next) {
 	
 };
 
-var createFornecedor = function (req, res) {
+var createContasReceber = function (req, res, next) {
 	let idFornecedor = ObjectId(req.params.idFornecedor);
-	console.log('idFornecedor: ', idFornecedor)
+	console.log('idFornecedor:', idFornecedor)
 	Fornecedor.findById({_id: idFornecedor}).then(data => {
-
-		axios.post('https://prjqualivida.mxmwebmanager.com.br/api/InterfacedoFornecedor/Gravar', {
-			AutheticationToken: {
-				Username: "TESTEAPI.QUA",
-				Password: "TST90",
-				EnvironmentName: "QUALIVIDAPROJ"				
-			},
+		console.log("*****",data);
+		let contasReceber = new ContasReceber(req.body);
+		
+		contasReceber.save(async function (err, contasReceber){
+			if (err){
+				next(err);
+				} else {
+				axios.post('https://prjqvsaude.mxmwebmanager.com.br/api/InterfacedoContasPagarReceber/Gravar', {
+				AutheticationToken: {
+					Username: "TESTEAPI.QUA",
+					Password: "TST90",
+					EnvironmentName: "QUALIVIDAPROJ"				
+				},
+			
 			Data: {
-				InterfacedoFornecedor: [
+				InterfacedoContasPagarReceber: [
 					{
-						SequenciadoRegistro: data.id,
-						Codigo: data.codigo,
-						TipodePessoa: "J", 
-						CPFouCNPJ: data.cnpj,
-						Nome: data.nome,
-						NomeFantansia: data.nome,
-						TipodoLocaldoIndicadordeInscricaoEstadual: "1",
-						Inscricao: "26825520",
-						InscricaoMunicicipal: "",
-						InscricaoSuframa: "",
-						FornecedorERural: "N",
-						Cooperativa: "N",
-						InscricaonoINSS: "",
-						ClassenoINSS: "12",
-						TetoMaximonoINSS: "",
-						SalarioBase: "",
-						PisPasep: "",
-						QuantidadedeDependente: "0",
-						CodigoBrasileirodeOcupacao: "",
-						DatadeNascimento: data.dataNascimento,
-						EstadoCivil: data.estadoCivil,
-						Nacionalidade: "BRA",
-						CodigodoPais: "BRA",
-						Pais: "Brasil",
-						Cep: "20040-901",
-						Endereco: "Endereço fornecedor",
-						NumerodoEndereco: "500",
-						ComplementodoEndereco: "Quadra 1345",
-						Bairro: "Centro",
-						CodigodaCidade: "3300605",
-						Cidade: "Rio de Janeiro",
-						Uf: "RJ",
-						Telefone: "99999-9999",
-						Email: "joaoemaria@bol.en.br",
-						Ativo: "A",
-						Homologado: "S",
-						InformacaoesComplementares: "N",
+						SequenciadoRegistro: "1",
+						Identificacao:"PR",
+						CodigoClienteFornecedor: "73571314000118", 
+						NumerodoTitulo: "2084",
+						DocumentoFiscal:"2084",
+						EmpresaEmitente: "RR",
+						Filial: "01",
+						EmpresaRecebedora: "RR",
+						TipodeTitulo: "NF",
+						DatadeEmissao: "01012019",
+						DatadeVencimento: "27112019",
+						DatadaProgramacao: "27112019",
+						CodigodaMoeda: "01",
+						ValordoTitulo: "1500,00",
+						TipodeCobranca: "BO",
+						Banco: "",
+						Agencia: "",
+						Portador: "",
+						Observacao: "Teste de integração",
+						ValordeDesconto: "",
+						DatadoDesconto: "",
+						ValordeBonificacao: "",
+						ValordePermanencia: "",
+						ValordeMulta: "",
+						ValordeAntecipacao: "",
+						CodigodoIRRF: "",
+						ValordoIRRF: "",
+						CodigodoINSS: "",
+						ValordoINSS: "",
+						CodigodoISS: "",
+						ValordoISS: "",
+						EnderecodeCobranca: "",
+						CondicaodePagamento: "",
+						CodigodoPIS: "",
+						ValordoPIS: "",
+						CodigodoCOFINS: "",
+						ValordoCOFINS: "",
+						CodigodaContribuicaoSocial: "",
+						ValordaContribuicaoSocial: "",
+						DatadaEntrada:"", ////////////////
+						FormadePagamento:"",////////////////////
+						CodigodoINSSI: "",
+						INSSIDED: "",
+						ValordeCotacaodaProvisao: "",
+						CodigodaContaDocumento: "",
+						NumerodoCheque: "",
+						Nominal: "",
+						ChequeNominal: "",		
+						BaixadeCheque: "",
+						DatadeCompetencia: "27112019",
+						CodigodeControle: "",
+						BasedeCalculoIRRF: "",
+						BasedeCalculoINSS: "",
+						BasedeCalculoISS: "",
+						BasedeCalculoPIS: "",
+						BasedeCalculoCOFINS: "",
+						BasedeCalculoCSOCIAL: "",
+						BasedeCalculoINSSI: "",
+						BasedeCalculoSEST: "",
+						DatadeCredito:"",
+						NomeArquivoExtencao:"",
+						InterfaceGrupoPagarReceber: [
+						  {
+							CodigodoFornecedor: "14270428000169",
+							NumerodoTitulo: "3012",
+							CodigodoGrupo: "201.2",
+							NumerodoCentrodeCusto: "40005",
+							ValordoGrupo: "1500,00",
+							PlanodeCentrodeCusto: "QLV",
+							Historico: "Teste de integração"
+						  }
+						]
 					}
 				]
 			}
 		}).then(resp => {
 			res.json({ "resposta Servidor MXM": resp.data.Messages[0], "Dados Enviados": JSON.parse(resp.config.data), "Processo :": resp.data.Data });
-			console.log(data);
+			console.log("---" ,data);
+			console.log("123/////",resp.data.Messages[0])
 		})
+	 }
+	})	
 		
 	})
 	
 }
 
+router.route('/contrato_beneficiario/:idFornecedor/contasreceber')
+	.get(createContasReceber);
+
+//createContasAPagar
+router.route('/contrato_beneficiario/:idFornecedor/contaspagar')
+	.get(createContasPagar);
+
 router.route('/contrato_beneficiario/csv/:id')
 		.get(getFindByIdCsv);
-
 
 router.route('/contrato_beneficiario/:id/putfornecedor')
 	.put(putFornecedor);
 
+router.route('/contrato_beneficiario/:id/putcontaspagar')
+	.put(putContasPagar);
 
 router.route('/contrato_beneficiario')
 	.post(createContrato)
@@ -713,8 +1021,10 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use('/api/v1', router);
 
 app.listen(3001)
+
 module.exports = app;
 
 
 
 
+//http://api-hadministradora.hmg.marlin.com.br/

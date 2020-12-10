@@ -1,0 +1,131 @@
+{
+			AutheticationToken: {
+				Username: "TESTEAPI.QUA",
+				Password: "TST90",
+				EnvironmentName: "QUALIVIDAPROJ"				
+			},
+			Data: {
+				InterfacedoFornecedor: [
+					{
+						SequenciadoRegistro: data.id,
+						Codigo: data.codigo,
+						TipodePessoa: "J", 
+						CPFouCNPJ: data.cnpj,
+						Nome: data.nome,
+						NomeFantansia: data.nome,
+						TipodoLocaldoIndicadordeInscricaoEstadual: "1",
+						Inscricao: "26825520",
+						InscricaoMunicicipal: "",
+						InscricaoSuframa: "",
+						FornecedorERural: "N",
+						Cooperativa: "N",
+						InscricaonoINSS: "",
+						ClassenoINSS: "12",
+						TetoMaximonoINSS: "",
+						SalarioBase: "",
+						PisPasep: "",
+						QuantidadedeDependente: "0",
+						CodigoBrasileirodeOcupacao: "",
+						DatadeNascimento: data.dataNascimento,
+						EstadoCivil: data.estadoCivil,
+						Nacionalidade: "BRA",
+						CodigodoPais: "BRA",
+						Pais: "Brasil",
+						Cep: "20040-901",
+						Endereco: "Endereço fornecedor",
+						NumerodoEndereco: "500",
+						ComplementodoEndereco: "Quadra 1345",
+						Bairro: "Centro",
+						CodigodaCidade: "3300605",
+						Cidade: "Rio de Janeiro",
+						Uf: "RJ",
+						Telefone: "99999-9999",
+						Email: "joaoemaria@bol.en.br",
+						Ativo: "A",
+						Homologado: "S",
+						InformacaoesComplementares: "N",
+						InterfaceContaCorrentedoFornecedor: [
+							{
+								CodigodoFornecedor: "14270428000169",
+								CodigodaContaCorrente: "012",
+								CodigodoBanco: "341",
+								NomedoBanco: "itau",
+								AgenciadoBanco: "0740",
+								NomedaAgencia: "Tutoia",
+								EnderecodaAgencia: "Rua Tutoia, 300",
+								BairrodaAgencia: "Paraiso",
+								CidadedaAgencia: "Sao Paulo",
+								UFdaAgencia: "SP",
+								CepdaAgencia: "04311-080",
+								NumerodaContaBancaria: "62533-9",
+								TipodeConta: "C",
+								StatusdaConta: "A",
+								IndicadordeContaPrincipal: "S"
+							}
+						],
+						InterfaceFornecedorContabil: [
+							{
+								SequenciadoFornecedorContabil: 1,
+								CodigoFornecedor: "14270428000169",
+								CodigoEmpresa: "001",
+								CodigoFilial: "00",
+								CodigoMoeda: "BRL",
+								NumeroContaContabil: "",
+								NumeroContaContabilAntecipacao: "",
+								InterfacedoFornecedorGrupoPagamento: [
+									{
+										SequenciadoFornecedorGrupoPagamento: "1",
+										CodigoFornecedor: "14270428000169",
+										CodigoEmpresa: "001",
+										CodigoFilial: "00",
+										CodigoMoeda: "BRL",
+										CodigoGrupoPagamento: "201.2",
+										CodigoImpostoIR: "",
+										CodigoImpostoINSS: "",
+										CodigoImpostoISS: "",
+										CodigoImpostoPIS: "",
+										CodigoImpostoCOFINS: "",
+										CodigoImpostoContribuicaoSocial: "",
+										CodigoImpostoINSSI: "",
+										CodigoImpostoSEST: "",
+										IdentificadorTipoServico: "1",
+										CodigoAtividadeEconomica: "2"
+									}
+								]
+							}
+						],
+						InterfaceFornecedorBeneficiario: [
+							{
+								CodigodoFornecedor: "14270428000169",
+								CodigodoBeneficiario: data.CodigodoBeneficiario,
+								CodigodoTipodeRelacionamento: "3"
+							}
+						],
+						InterfaceFornecedorHistorico: [
+							{
+								CodigodoFornecedor: "14270428000169",
+								DatadaOcorrencia: "10/10/19",
+								Historico: "Teste de Historico de fornecedor",
+								TipoOcorrencia: "01"
+							}
+						],
+						InterfaceFornecedorInformacoesComplementares: [
+							{
+								InscricaoEstadualdoParticipante: "",
+								InscricaonoINSSdoParticipante: "",
+								NumerodeIdentificacaodoTrabalhador: "",
+								NumerodaNaturezadaRetencao: "",
+								CodigoTipodeAssinante: "",
+								ClassificacaonoSimplesNacional: "",
+								TipodoClienteServicodeComunicacao: "",
+								TipodePessoaEstrangeira: "",
+								NIFFornecedorEstrangeiro: "",
+								BeneficiarodeRendimentonoExterior: "",
+								BeneficiarioDispensadodoNIF: "",
+								PaisNaoExigeNIF: ""
+							}
+						]
+					}
+				]
+			}
+		}

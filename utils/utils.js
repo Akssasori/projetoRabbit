@@ -1,3 +1,5 @@
+const Fornecedor = require('../db/Fornecedor');
+
 module.exports = {
 
     retornaCampo: (status, CampoSelecionado) => {
@@ -7,8 +9,14 @@ module.exports = {
 
             case 1:
                 let administradora
-                if (CampoSelecionado)
-                    administradora = { "administradora.razaoSocial": CampoSelecionado }
+                let administradoraRegex
+               
+
+                if (CampoSelecionado){
+                    administradoraRegex = new RegExp(CampoSelecionado, 'i');
+                    administradora = { "administradora.razaoSocial": { $in: [administradoraRegex] } }
+                    // administradora = { "administradora.razaoSocial": CampoSelecionado }
+                }
 
                 else
                     administradora = {}
@@ -17,9 +25,13 @@ module.exports = {
                 break
             case 2:
                 let operadora
-                if (CampoSelecionado)
-                    operadora = { "operadora.nome": CampoSelecionado }
+                let operadoraRegex
 
+                if (CampoSelecionado){
+                    operadoraRegex = new RegExp(CampoSelecionado , 'i');
+                    operadora = { "operadora.nome": { $in: [operadoraRegex] } }
+                }
+                    
                 else
                     operadora = {}
 
@@ -28,48 +40,65 @@ module.exports = {
             case 3:
 
                 let dataNascimento
-                if (CampoSelecionado)
-                    dataNascimento = { "titular.dataNascimento": CampoSelecionado }
+                if (CampoSelecionado){
+                    dataNascimentoRegex = new RegExp(CampoSelecionado, 'i');
+                    dataNascimento = { "titular.dataNascimento": { $in: [dataNascimentoRegex] }}
+
+                }
 
                 else
                     dataNascimento = {}
 
                 return dataNascimento;
                 break;
-            case 4:
-                let nomeTitular
-                let testando = CampoSelecionado.toLowerCase().split(' ');
-                let nome;
-                let sobrenome;
                 
-                for (var i = 0; i < testando.length; i++) {
-                    if (i === 0) {
-                        testando[i] = testando[i][0].toUpperCase() + testando[i].slice(1);
-                        nome = `^${testando[i]}`;
-                    } else {
-                        testando[i] = testando[i][0].toUpperCase() + testando[i].slice(1);
-                        sobrenome = `${testando[i]}`;
-                    }
-                }
-                let nomeRegex = new RegExp(nome);
-                let sobrenomeRegex = new RegExp(sobrenome);
-            
+            case 4:
+                    let nomeTitular
                 if (CampoSelecionado){
-                    console.log('nomeRegex: ',nomeRegex)
+                    
+                    let testando = CampoSelecionado.split(' ');
+                    let nome;
+                    let sobrenome;
+                    
+                    for (var i = 0; i < testando.length; i++) {
+                        if (i === 0) {
+                            nome = `^${testando[i]}`;
+                        } else {
+                            sobrenome = `${testando[i]}`;
+                        }
+                    }
+                
+                    let sobrenomeRegex;
+                    
+                    if(sobrenome){
+                        sobrenomeRegex = new RegExp(sobrenome,'i');
+
+                    }else{
+
+                        sobrenomeRegex = '';
+                    }
+                    
+                    let nomeRegex = new RegExp(nome,'i');
+
                     nomeTitular = { "titular.nome": { $in: [nomeRegex, sobrenomeRegex] } }
                 }
-              
 
                 else
                     nomeTitular = {}
 
                 return nomeTitular;
+
                 break;
 
             case 5:
                 let entidade
-                if (CampoSelecionado)
-                    entidade = { "entidade.sigla": CampoSelecionado }
+                let entidadeRegex
+
+                if (CampoSelecionado){
+                    entidadeRegex = new RegExp(CampoSelecionado, 'i');
+                    // entidade = { "entidade.sigla": CampoSelecionado }
+                    entidade = { "entidade.sigla": { $in: [entidadeRegex]}}
+                }
 
                 else
                     entidade = {}
@@ -82,6 +111,20 @@ module.exports = {
 
                 break;
         }
+    },
+    fornecedorSave : (collection, corretora) =>{
+        console.log('corretora : ', corretora)
+
+        collection.insertMany([corretora], function (err, documents) {
+            console.log('insertMany: ',documents)
+        })
+        
+        // let fornecedor = new Fornecedor();
+        
+        // fornecedor.save(corretora,(err, documents) =>{
+        //     console.log('documents: ',documents)
+        // })
     }
+
 
 }
